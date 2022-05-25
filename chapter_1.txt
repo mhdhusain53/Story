@@ -1,2 +1,464 @@
-hello this is 1st version of what i make.
-Are you idiot.
+1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ADD ARRAY OF N NOS.
+
+#include <xc.h>
+#include<stdio.h>
+void putch(char data)
+{
+ while(  TXIF==0)
+ continue;
+ TXREG = data;
+}
+void init_uart(void)
+{
+ SPBRG = 0x19; // 9600 baud @ 4 MHz
+ TXEN = 1; // enable transmitter
+ BRGH = 1; // select high baud rate
+ SPEN = 1; // enable serial port
+ CREN = 1; // enable continuous operation
+}
+
+
+void main(void) {
+     
+    init_uart();
+    int arr[10]={1,2,3,4,5,6,7,8,9,10};
+    int sum=0;
+    TRISB=0;
+    PORTB=0;
+    for(int i=0;i<10;i++){
+        sum=sum+arr[i];
+        PORTB=sum;
+    }
+    printf("%d",sum);
+    return;
+}
+
+
+
+2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SORT ARRAY OF N NOS. in ASSEN ORDER USING BUBBLE SORT
+
+
+#include <xc.h>
+#include<stdio.h>
+void putch(char data)
+{
+ while( ! TXIF)
+ continue;
+ TXREG = data;
+}
+void init_uart(void)
+{
+ SPBRG = 0x19; // 9600 baud @ 4 MHz
+ TXEN = 1; // enable transmitter
+ BRGH = 1; // select high baud rate
+ SPEN = 1; // enable serial port
+ CREN = 1; // enable continuous operation
+}
+
+void main(void){
+    init_uart();
+    int n=4;
+    int a[]={11,45,23,15};
+    //TRISB=0;
+    //PORTB=0;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n-i-1;j++){
+            if(a[j]>a[j+1]){
+                int temp=a[j];
+                a[j]=a[j+1];
+                a[j+1]=temp;
+			printf("%d phase \n",i+1);
+			for(int i=0;i<n;i++){
+				printf("%d",a[i]);
+			}
+            }
+        }
+    }
+printf("Elements after swapping");
+    for(int i=0;i<n;i++){
+        printf("%d \n",a[i]);
+    }
+    return;
+}
+
+
+3>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+sort an array of n numbers in ascending order using selection sort 
+
+#include<stdio.h>
+#include<xc.h>
+void putch(char data)
+{
+ while( ! TXIF)
+ continue;
+ TXREG = data;
+}
+void init_uart(void)
+{
+ SPBRG = 0x19; // 9600 baud @ 4 MHz
+ TXEN = 1; // enable transmitter
+ BRGH = 1; // select high baud rate
+ SPEN = 1; // enable serial port
+ CREN = 1; // enable continuous operation
+}
+
+void main(void) 
+{   init_uart();
+    int arr[10]={10,9,8,7,6,2,3,1,5,4};
+    // selection sort
+    for(int i=0;i<9;i++)
+    {
+        int small=i;
+        for(int j=i+1;j<10;j++)
+        {
+            if(arr[j]<arr[small])
+            {
+                small=j;
+            }
+            
+        }
+        // swaping of first element with small element.
+        int temp=arr[i];
+        arr[i]= arr[small];
+        arr[small]=temp;
+        printf("%d phase \n",i);
+        for(int i=0;i<10;i++){
+        printf("%d \n",arr[i]);
+    }
+    }
+    printf("Elements after swapping");
+    for(int i=0;i<10;i++){
+        //printf("Elements after swapping");
+        printf("%d \n",arr[i]);
+    }
+    return;
+}
+
+
+
+4>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+a. Multiply an 8-bit number by an 8-bit number (x and y)
+b. Divide an 8-bit number by an 8-bit number (x and y)
+
+
+#include <xc.h>
+
+void main(void){
+    int x,choice;
+    num1=100;
+    num2=20;
+    PORTB;
+    PORTD;
+    int *ptr;
+    while(1){
+        if(choice==0){
+            x=num1*num2;
+            PORTB=x/256;
+            PORTD=x%256;
+        }
+        if(choice==1){
+            PORTB=num1/num2;
+            PORTD=num1%num2;
+        }
+        ptr=&choice;
+    ptr=&x;
+    }
+    return;
+    
+}
+
+
+
+6>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Embedded C program to interface PIC18F4550 with LEDs so that alternate LEDs blink 
+after x seconds. Use Timer 0 without ISR to generate a delay of y ms.
+
+
+LED using TIMER0
+
+  
+include<xc.h>
+#include<stdlib.h>
+#include<stdio.h>
+#define _XTAL_FREQ 400000
+
+
+void delaybytimr0(){
+    T0CONbits.TMR0ON=1;
+    while(INTCONbits.TMR0IF==0);
+    T0CONbits.TMR0ON=0;
+    INTCONbits.TMR0IF=0;
+}
+
+void main(void){
+    
+    TRISB=0;
+    LATB=0;
+    T0CON=7;
+    INTCONbits.TMR0IF=0;
+    while(1){
+        
+        TMR0=46004;
+        delaybytimr0();
+        LATB=170;
+        TMR0=26474;
+        delaybytimr0();
+        LATB=85;
+    }
+    return;
+}
+
+
+
+
+7>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program to interface PIC18F4550 with buzzer so that buzzer turns on and 
+off after every x seconds. Use Timer 1 with ISR to generate a delay of y ms
+
+
+#include <xc.h>
+#include <pic18f4550.h>
+#define led LATAbits.LATA5
+
+int c = 0;
+void __interrupt() Timer_ISR(void){
+    if(TMR1IF==1){
+        TMR1IF = 0;
+        c++;
+        if(c==100){
+            led = ~led;
+            c = 0;
+        }   
+    }
+}
+void main(void) {
+    
+    TRISAbits.TRISA5 = 0;
+    LATAbits.LATA5 = 0;
+    
+    T1CON = 0;
+    
+    GIE = 1;
+    PEIE = 1;
+    TMR1IE = 1;
+    
+    TMR1 = 0;
+    TMR1IF = 0;
+    TMR1ON = 1;
+    
+    while(1);
+    return;
+}
+
+
+
+8>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program to interface PIC18F4550 with LEDs so that alternate LEDs blink 
+after x seconds. Use Timer 1 without ISR to generate a delay of y ms
+
+
+#include <xc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#define _XTAL_FREQ 4000000
+
+void delaybytmr1(){
+    T1CONbits.TMR1ON = 1;
+    while(PIR1bits.TMR1IF == 0);
+    T1CONbits.TMR1ON = 0;
+    PIR1bits.TMR1IF = 0;
+    
+}
+
+void main(void) {
+    TRISB = 0;
+    T1CON = 48;
+    PIR1bits.TMR1IF = 0;
+    LATB = 0;
+    while(1){
+        TMR1 = 0;
+        delaybytmr1();
+        LATB = 170;
+        TMR1 = 0;
+        delaybytmr1();
+        LATB = 85;
+    }
+    
+    return;
+}
+
+
+
+
+
+9>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program to interface PIC18F4550 with buzzer so that buzzer turns on and 
+off after every x seconds. Use Timer 0 with ISR to generate a delay of y ms
+
+
+#include <xc.h>
+#include <pic18f4550.h>
+#define led LATAbits.LATA5
+
+int c = 0;
+
+void __interrupt() Timer0_ISR(void)
+{
+    if(TMR0IF==1)
+	{
+        TMR0IF = 0;
+        c++;
+        if(c==100)
+		{
+            led = ~led;
+            c = 0;
+      	}   
+      }
+}
+void main(void) {
+    
+    TRISAbits.TRISA5 = 0;
+    LATAbits.LATA5 = 0;   
+    T0CON = 8;
+    GIE = 1;
+    PEIE = 1;
+    TMR0IE = 1;
+    TMR0 = 0;
+    TMR0IF = 0;
+    TMR0ON = 1;
+    while(1);
+    return;
+}
+
+
+10>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Embedded C program to for generating PWM signal for DC motor. The motor should 
+rotate in three different speeds n, n/2 and n/4, with frequency =a MHz. Assume any n.
+
+#include <xc.h>
+
+void main(void) {
+    TRISCbits.TRISC2 = 0;
+    CCP1CON = 0b00001100;
+    T2CON = 0b00000010;
+    PR2 = 61;
+    CCPR1L = 61;
+    while(1){
+        TMR2IF = 0;
+        TMR2 = 0;
+        TMR2ON = 1;
+        while(TMR2IF==0);
+    }
+    return;
+}
+
+
+11>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program to for generating PWM signal for DC motor. The motor should 
+rotate in three different speeds n, 2n, 3n and 4n, with frequency =a MHz. Assume any n.
+
+
+
+
+12>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program for external interrupt and the LED connected to relay should behave as follows:
+If LED is ON, it should be OFF after two interrupts, 
+if LED is OFF, it should be ON after one interrupt.
+
+
+#include (pic1814550.h>
+ void main (void) (
+TRISB=0;
+PORTB=0;
+TOCON=0x08:
+TMROIF=0:
+
+while(1){
+GIE=l:
+TMROIE-1:
+for (int 1=0:1<1000:1++) {
+TMRO=53536:
+TMROON-1:
+while (!TMROIF):
+TMROIF=0;
+TMROON=0;
+}
+PORTE=~PORTB:
+}
+
+
+
+
+
+
+13>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program for serial communication using UART. Demonstrate the following:
+Keep on transmitting “PICT” until the user gives a digit as input.
+Neglect all other inputs.
+
+#include <xc.h>
+#include<stdio.h>
+#include <pic18f4550.h>
+#define _XTAL_FREQ 4000000
+
+void putch(unsigned char c){
+    while(PIR1bits.TXIF ==0);
+    TXREG = c;
+}
+
+
+void main (void){
+    //init_uart();
+    int a = 0;
+    TRISC=0;
+    TXSTA=0x20;
+    RCSTA=0b10010000;
+    SPBRG=6;
+    TRISCbits.TRISC7=1;
+    while(1){
+        printf("\n PICT");
+        a = RCREG;
+        if(a>=1 && a<=9){
+            printf("\nEntered: %d", a);
+            break;
+        }
+    }
+    while(1);
+    return;
+}
+
+
+
+14>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+embedded C program for serial communication using UART. Demonstrate the following:
+Ask the user to enter digit, say k, receive it and display k, 2k, 3k, and 4k.
+Neglect any other input.
+
+
+
+#include <xc.h>
+#include<stdio.h>
+#define _XTAL_FREQ 4000000
+
+void putch(unsigned char c){
+    while(PIR1bits.TXIF==0);
+    TXREG = c;
+}
+
+
+void main(void) {
+    int a = 0;
+    TXSTA = 0x20;
+    RCSTA = 0b10010000;
+    SPBRG = 6;
+    TRISCbits.TRISC7 = 1;
+    while(PIR1bits.RCIF==0);
+    a = RCREG;
+    printf("\nValue of Input k %d",a);
+    printf("\nValue 2k %d",a*2);
+    printf("\nValue 3k %d",a*3);
+    printf("\nValue 4k %d",a*4);
+    return;
+}
